@@ -1,0 +1,16 @@
+{
+	"version": "0.1",
+	"install": {
+		"windows": [
+			["pypi", "numpy", "scipy", "pillow"],
+			["github", "vispy/vispy.git", "99ab3d0160f2c34d963c1ecb047fa5a3f728ace4"]
+		],
+		"osx": [
+			["pypi", "numpy", "scipy", "pillow"],
+			["github", "vispy/vispy.git", "99ab3d0160f2c34d963c1ecb047fa5a3f728ace4"]
+		]
+	},
+	"demo": [
+		["exec", "main.py"]
+	]
+}
