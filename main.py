@@ -8,6 +8,34 @@ import vispy                    # Main application support.
 import window                   # Terminal input and display.
 
 
+class HAL9000(object):
+    
+    def __init__(self, terminal):
+        """Constructor for the agent, stores references to systems and initializes internal memory.
+        """
+        self.terminal = terminal
+        self.counter = 0
+        
+    def on_input(self, evt):
+        """Called when user types anything in the terminal, connected via event.
+        """
+        self.terminal.log("Good morning! This is HAL.", side='right', color='#00805A')
+
+    def on_command(self, evt):
+        """Called when user types a command starting with `/` also done via events.
+        """
+        if evt.text == 'quit':
+            vispy.app.quit()
+        else:
+            self.terminal.log('Command `{}` unknown.'.format(evt.text), side='left', color='#ff3000')    
+            self.terminal.log("I'm afraid I can't do that.", side='right', color='#00805A')
+
+    def update(self, _):
+        """Main update called once per second via the timer.
+        """
+        pass
+
+
 class Application(object):
     
     def __init__(self):
@@ -18,20 +46,18 @@ class Application(object):
         self.window.log('Operator started the chat.', side='left', color='#808080')
         self.window.log('HAL9000 joined.', side='right', color='#808080')
 
+        # Construct and initialize the agent for this simulation.
+        self.agent = HAL9000(self.window)
+
         # Connect the terminal's existing events.
-        self.window.events.user_input.connect(self.on_input)
-        self.window.events.user_command.connect(self.on_command)
-
-    def on_input(self, evt):
-        self.window.log("I'm afraid I can't do that.", side='right', color='#00805A')
-
-    def on_command(self, evt):
-        if evt.text == 'quit':
-            vispy.app.quit()
-        else:
-            self.window.log('Command `{}` unknown.'.format(evt.text), side='left', color='#ff3000')    
+        self.window.events.user_input.connect(self.agent.on_input)
+        self.window.events.user_command.connect(self.agent.on_command)
 
     def run(self):
+        timer = vispy.app.Timer(interval=1.0)
+        timer.connect(self.agent.update)
+        timer.start()
+        
         vispy.app.run()
 
 
