@@ -53,11 +53,12 @@ class TerminalWindow(object):
 
         vispy.scene.visuals.GridLines(parent=self.widget, scale=(0.0, 15.984/CONSOLE_LINEHEIGHT))
 
-        self.canvas.events.resize.connect(self.on_resize)
-        self.canvas.events.key_press.connect(self.on_key_press)
-
         self.canvas.show(visible=True)
         self.canvas.events.mouse_press()            # HACK: Layout workaround for bug in Vispy 0.5.0.
+
+        self.old_size = self.canvas.size
+        self.canvas.events.resize.connect(self.on_resize)
+        self.canvas.events.key_press.connect(self.on_key_press)
 
     def _create_terminal(self):
         """Setup everything that's necessary for processing key events and the text.
@@ -66,7 +67,6 @@ class TerminalWindow(object):
         self.entry_offset = CONSOLE_LINEOFFSET - CONSOLE_LINEHEIGHT / 2 + self.canvas.size[1] 
         self.entry_blink = 0
         self.entries = []
-        self.old_size = self.canvas.size
 
         self.log(CONSOLE_PREFIX, color='#1463A3')
 
