@@ -14,20 +14,34 @@ CONSOLE_MARGIN = 16.0
 
 
 class TextEvent(vispy.util.event.Event):
+    """Simple data-structure to store a text string, as processed by the terminal window.
+    """
+
     def __init__(self, text):
         super(TextEvent, self).__init__('text_event')
         self.text = text
 
 
 class TerminalWindow(object):
+    """Creates and manages a window used for terminal input. You can setup notifications via
+    `self.events` that emits notifications for user inputs and user commands. 
+    """
 
     def __init__(self):
+        """Constructor sets up events, creates a canvas and data for processing input.
+        """ 
         self.events = vispy.util.event.EmitterGroup(
                                 user_input=TextEvent,
                                 user_command=TextEvent)
  
+        self._create_canvas()
+        self._create_terminal()
+
+    def _create_canvas(self):
+        """Initialize the Vispy scene and a canvas, connect up the events to this object.
+        """
         self.canvas = vispy.scene.SceneCanvas(
-                                title='nucl.ai Course',
+                                title='HAL9000 Terminal - nucl.ai Courses',
                                 size=(1280, 720),
                                 bgcolor='#F0F0F0',
                                 show=False,
@@ -39,6 +53,15 @@ class TerminalWindow(object):
 
         vispy.scene.visuals.GridLines(parent=self.widget, scale=(0.0, 15.984/CONSOLE_LINEHEIGHT))
 
+        self.canvas.events.resize.connect(self.on_resize)
+        self.canvas.events.key_press.connect(self.on_key_press)
+
+        self.canvas.show(visible=True)
+        self.canvas.events.mouse_press()            # HACK: Layout workaround for bug in Vispy 0.5.0.
+
+    def _create_terminal(self):
+        """Setup everything that's necessary for processing key events and the text.
+        """
         self.text_buffer = ''
         self.entry_offset = CONSOLE_LINEOFFSET - CONSOLE_LINEHEIGHT / 2 + self.canvas.size[1] 
         self.entry_blink = 0
@@ -47,22 +70,16 @@ class TerminalWindow(object):
 
         self.log(CONSOLE_PREFIX, color='#1463A3')
 
-        self.canvas.show(visible=True)
-        self.canvas.events.mouse_press()            # HACK: Layout workaround for bug in Vispy 0.5.0.
-
-        self.canvas.events.resize.connect(self.on_resize)
-        self.canvas.events.key_press.connect(self.on_key_press)
-
         timer = vispy.app.Timer(interval=1.0 / 3.0)
         timer.connect(self.on_blink)
         timer.start()
 
+    def scroll(self, height):
+        self.widget.transform.translate((0.0, -height))
+
     def on_resize(self, evt):
         self.scroll(self.old_size[1] - evt.size[1])
         self.old_size = evt.size
-
-    def scroll(self, height):
-        self.widget.transform.translate((0.0, -height))
 
     def log(self, text, side='left', color='#1463A3'):
         assert side in ('left', 'right', 'center')
@@ -104,8 +121,10 @@ class TerminalWindow(object):
             else:
                 self.log(self.text_buffer, side='left')
             self.text_buffer = ''
+
         if c.name == 'Backspace':
             self.text_buffer = self.text_buffer[:-1]
+
         self.show_input(self.text_buffer)       
 
     def on_key_char(self, text):

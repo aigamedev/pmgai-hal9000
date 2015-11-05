@@ -23,8 +23,7 @@ class Application(object):
         self.window.events.user_command.connect(self.on_command)
 
     def on_input(self, evt):
-        print(evt.text)
-        self.window.log('This is a reply from a bot.', side='right', color='#00805A')
+        self.window.log("I'm afraid I can't do that.", side='right', color='#00805A')
 
     def on_command(self, evt):
         if evt.text == 'quit':
