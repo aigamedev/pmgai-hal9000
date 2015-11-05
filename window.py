@@ -96,7 +96,7 @@ class TerminalWindow(object):
                                          face='Questrial',
                                          color=color,
                                          bold=False,
-                                         font_size=10 * self.canvas.pixel_scale,
+                                         font_size=20,
                                          anchor_x=side,
                                          anchor_y='bottom',
                                          pos=[position, self.entry_offset, 0.0])
@@ -120,6 +120,7 @@ class TerminalWindow(object):
                 self.events.user_command(TextEvent(self.text_buffer[1:]))
             else:
                 self.log(self.text_buffer, side='left')
+                self.events.user_input(TextEvent(self.text_buffer))
             self.text_buffer = ''
 
         if c.name == 'Backspace':
