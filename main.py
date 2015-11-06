@@ -14,21 +14,26 @@ class HAL9000(object):
         """Constructor for the agent, stores references to systems and initializes internal memory.
         """
         self.terminal = terminal
-        self.counter = 0
-        
+        self.location = 'unknown'
+
     def on_input(self, evt):
         """Called when user types anything in the terminal, connected via event.
         """
-        self.terminal.log("Good morning! This is HAL.", side='right', color='#00805A')
+        self.terminal.log("Good morning! This is HAL.", align='right', color='#00805A')
 
     def on_command(self, evt):
         """Called when user types a command starting with `/` also done via events.
         """
         if evt.text == 'quit':
             vispy.app.quit()
+
+        elif evt.text.startswith('relocate'):
+            self.terminal.log('', align='center', color='#404040')
+            self.terminal.log('\u2014 Now in the {}. \u2014'.format(evt.text[9:]), align='center', color='#404040')
+
         else:
-            self.terminal.log('Command `{}` unknown.'.format(evt.text), side='left', color='#ff3000')    
-            self.terminal.log("I'm afraid I can't do that.", side='right', color='#00805A')
+            self.terminal.log('Command `{}` unknown.'.format(evt.text), align='left', color='#ff3000')    
+            self.terminal.log("I'm afraid I can't do that.", align='right', color='#00805A')
 
     def update(self, _):
         """Main update called once per second via the timer.
@@ -43,8 +48,8 @@ class Application(object):
         self.window = window.TerminalWindow()
 
         # Print some default lines in the terminal as hints.
-        self.window.log('Operator started the chat.', side='left', color='#808080')
-        self.window.log('HAL9000 joined.', side='right', color='#808080')
+        self.window.log('Operator started the chat.', align='left', color='#808080')
+        self.window.log('HAL9000 joined.', align='right', color='#808080')
 
         # Construct and initialize the agent for this simulation.
         self.agent = HAL9000(self.window)

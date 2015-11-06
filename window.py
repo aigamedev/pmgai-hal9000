@@ -81,26 +81,28 @@ class TerminalWindow(object):
         self.scroll(self.old_size[1] - evt.size[1])
         self.old_size = evt.size
 
-    def log(self, text, side='left', color='#1463A3'):
-        assert side in ('left', 'right', 'center')
+    def log(self, text, align='left', color='#1463A3'):
+        assert align in ('left', 'right', 'center')
 
-        if side == 'center':
+        if align == 'center':
             position = self.canvas.size[0] / 2
-        elif side == 'left':
+        elif align == 'left':
             position = CONSOLE_MARGIN
         else:
             position = self.canvas.size[0] - CONSOLE_MARGIN
 
-        entry = vispy.scene.visuals.Text(parent=self.widget,
+        if text != '':
+            entry = vispy.scene.visuals.Text(parent=self.widget,
                                          text=text,
                                          face='Questrial',
                                          color=color,
                                          bold=False,
                                          font_size=20,
-                                         anchor_x=side,
+                                         anchor_x=align,
                                          anchor_y='bottom',
                                          pos=[position, self.entry_offset, 0.0])
-        self.entries.append(entry)
+            self.entries.append(entry)
+
         self.scroll(CONSOLE_LINEHEIGHT)
         self.entry_offset += CONSOLE_LINEHEIGHT
         
