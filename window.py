@@ -121,7 +121,7 @@ class TerminalWindow(object):
             if self.text_buffer.startswith('/'):
                 self.events.user_command(TextEvent(self.text_buffer[1:]))
             else:
-                self.log(self.text_buffer, side='left')
+                self.log(self.text_buffer, align='left')
                 self.events.user_input(TextEvent(self.text_buffer))
             self.text_buffer = ''
 
