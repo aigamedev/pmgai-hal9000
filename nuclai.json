@@ -1,12 +1,12 @@
 {
-	"version": "0.1",
+	"version": "0.5",
 	"install": {
 		"windows": [
-			["pypi", "numpy", "scipy", "pillow"],
+			["pypi", "numpy", "scipy", "nltk"],
 			["github", "vispy/vispy.git", "99ab3d0160f2c34d963c1ecb047fa5a3f728ace4"]
 		],
 		"osx": [
-			["pypi", "numpy", "scipy", "pillow"],
+			["pypi", "numpy", "scipy", "nltk"],
 			["github", "vispy/vispy.git", "99ab3d0160f2c34d963c1ecb047fa5a3f728ace4"]
 		]
 	},
